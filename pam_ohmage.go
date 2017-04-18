@@ -1,18 +1,14 @@
 package main
 
-// #cgo LDFLAGS: -lpam -fPIC
-// #include <security/pam_appl.h>
-// #include <stdlib.h>
-import "C"
-
 import (
-  "fmt"
+  "errors"
 )
 
-//export pam_sm_authenticate
-func pam_sm_authenticate( pamh *C.pam_handle_t, flags C.int, argc C.int, argv **C.char ) C.int {
-  fmt.Printf( "Called\n" );
-  return C.PAM_SUCCESS
-}
+func isUserAuthenticated( ohmage_url string, username string, password string ) ( bool, error ) {
+  // todo: validate username and password strings
+  if ohmage_url == "" || username == "" || password == "" {
+    return false, errors.New( "Invalid/empty login parameters" )
+  }
 
-func main( ) { }
+  return true, nil
+}
