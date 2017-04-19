@@ -47,9 +47,16 @@ func pam_sm_authenticate( pamh *C.pam_handle_t, flags C.int, argc C.int, argv **
     fmt.Println( err )
     return C.PAM_ABORT
   } else if authenticated {
-    return C.PAM_SUCCESS
+    user_account_ready, err := isUserAccountReady( username )
+    if err != nil {
+      return C.PAM_AUTHINFO_UNVAIL
+    } else if user_account_ready {
+      return C.PAM_SUCCESS
+    } else {
+      return C.PAM_ABORT
+    }
   } else {
-    return C.PAM_USER_UNKNOWN
+    return C.PAM_AUTH_ERR
   }
 }
 
