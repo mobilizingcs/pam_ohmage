@@ -12,10 +12,10 @@ char *get_password(pam_handle_t *pamh);
 import "C"
 
 import (
-  "fmt"
   "strings"
   "unsafe"
-  "errors"
+  "github.com/pkg/errors"
+  "github.com/op/go-logging"
   "net/url"
 )
 
@@ -36,20 +36,27 @@ func pam_sm_authenticate( pamh *C.pam_handle_t, flags C.int, argc C.int, argv **
   password := C.GoString(_password);
 
   cli_params := sliceFromArgv( argc, argv )
-  ohmage_url, err := parseOhmageUrl( cli_params[0] )
+
+  ohmage_url, err := parseOhmageUrl( cli_params[ 0 ] )
   if err != nil {
-    fmt.Println( err )
     return C.PAM_ABORT
+  }
+
+  if len( cli_params ) == 2 {
+    debug_var, err := parseDebugVariable( cli_params[ 1 ] )
+    if err == nil && debug_var {
+      logging.SetLevel( logging.DEBUG, "pam_ohmage" )
+    }
   }
 
   authenticated, err := isUserAuthenticated( ohmage_url, username, password )
   if err != nil {
-    fmt.Println( err )
     return C.PAM_ABORT
   } else if authenticated {
     user_account_ready, err := isUserAccountReady( username )
     if err != nil {
-      return C.PAM_AUTHINFO_UNVAIL
+      log.Error( err )
+      return C.PAM_ABORT
     } else if user_account_ready {
       return C.PAM_SUCCESS
     } else {
@@ -57,6 +64,19 @@ func pam_sm_authenticate( pamh *C.pam_handle_t, flags C.int, argc C.int, argv **
     }
   } else {
     return C.PAM_AUTH_ERR
+  }
+}
+
+func parseDebugVariable( _parameter string ) ( bool, error ) {
+  parameter := strings.Split( _parameter, "=" )
+  if parameter[ 0 ] == "debug" {
+    if parameter[ 1 ] == "true" {
+      return true, nil
+    } else {
+      return false, nil
+    }
+  } else {
+    return false, errors.New( "could not find the debug variable" )
   }
 }
 

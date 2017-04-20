@@ -5,3 +5,5 @@
 	sudo /usr/lib/rstudio-server/bin/pamtester --verbose rstudio vagrant authenticate
 
 make: .build .test
+
+build: .build
