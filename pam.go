@@ -2,7 +2,9 @@ package main
 
 /*
 #cgo LDFLAGS: -lpam -fPIC
-#include <security/pam_appl.h>
+#define PAM_SM_AUTH
+#define PAM_SM_SESSION
+#include <security/pam_modules.h>
 #include <stdlib.h>
 #include <string.h>
 char *string_from_argv(int i, char **argv);
@@ -12,21 +14,17 @@ char *get_password(pam_handle_t *pamh);
 import "C"
 
 import (
-  "strings"
   "unsafe"
-  "github.com/pkg/errors"
+  "strings"
   "github.com/op/go-logging"
-  "net/url"
 )
 
-//export pam_sm_authenticate
-func pam_sm_authenticate( pamh *C.pam_handle_t, flags C.int, argc C.int, argv **C.char ) C.int {
-  _username := C.get_username( pamh )
-  if _username == nil {
+//export pamAuthenticate
+func pamAuthenticate( pamh *C.pam_handle_t, flags C.int, argc C.int, argv **C.char ) C.int {
+  username := getPamUsername( pamh )
+  if username == "" {
     return C.PAM_USER_UNKNOWN
   }
-  defer C.free( unsafe.Pointer( _username ) )
-  username := C.GoString(_username);
 
   _password := C.get_password( pamh )
   if _password == nil {
@@ -34,25 +32,31 @@ func pam_sm_authenticate( pamh *C.pam_handle_t, flags C.int, argc C.int, argv **
   }
   defer C.free( unsafe.Pointer( _password ) )
   password := C.GoString(_password);
+  if password == "" {
+    // No ohmage user can have an empty password!
+    return C.PAM_USER_UNKNOWN
+  }
 
-  cli_params := sliceFromArgv( argc, argv )
-
-  ohmage_url, err := parseOhmageUrl( cli_params[ 0 ] )
+  cli_params := mapFromArgv( argc, argv )
+  ohmage_url, err := parseOhmageUrl( cli_params[ "url" ] )
   if err != nil {
     return C.PAM_ABORT
   }
-
-  if len( cli_params ) == 2 {
-    debug_var, err := parseDebugVariable( cli_params[ 1 ] )
-    if err == nil && debug_var {
-      logging.SetLevel( logging.DEBUG, "pam_ohmage" )
-    }
+  if cli_params[ "debug" ] == "true" {
+    logging.SetLevel( logging.DEBUG, "pam_ohmage" )
   }
 
   authenticated, err := isUserAuthenticated( ohmage_url, username, password )
+
   if err != nil {
-    return C.PAM_ABORT
+    log.Error( "userame:", username, err )
+    return C.PAM_AUTH_ERR
   } else if authenticated {
+    // RStudio expects the local account to be present after authentication succeeds.
+    // This is a mechanism to get around this assumption: We call the open session
+    // module from within this module before returning.
+    // The open session module is still needed for RStudio PAM sessions
+    log.Debug( "Calling open_session module" )
     user_account_ready, err := isUserAccountReady( username )
     if err != nil {
       log.Error( err )
@@ -67,39 +71,50 @@ func pam_sm_authenticate( pamh *C.pam_handle_t, flags C.int, argc C.int, argv **
   }
 }
 
-func parseDebugVariable( _parameter string ) ( bool, error ) {
-  parameter := strings.Split( _parameter, "=" )
-  if parameter[ 0 ] == "debug" {
-    if parameter[ 1 ] == "true" {
-      return true, nil
-    } else {
-      return false, nil
-    }
-  } else {
-    return false, errors.New( "could not find the debug variable" )
+//export pamOpenSession
+func pamOpenSession( pamh *C.pam_handle_t, flags C.int, argc C.int, argv **C.char ) C.int {
+  cli_params := mapFromArgv( argc, argv )
+  if cli_params[ "debug" ] == "true" {
+    logging.SetLevel( logging.DEBUG, "pam_ohmage" )
   }
+  username := getPamUsername( pamh )
+  if username != "" {
+    user_account_ready, err := isUserAccountReady( username )
+    if err != nil {
+      log.Error( "username:", username, err )
+      return C.PAM_SESSION_ERR
+    } else if user_account_ready {
+      return C.PAM_SUCCESS
+    }
+  }
+  return C.PAM_SESSION_ERR
 }
 
-func parseOhmageUrl( _parameter string ) ( string, error ) {
-  parameter := strings.Split( _parameter, "=" )
-  if parameter[ 0 ] == "url" {
-    parsed_url, err := url.ParseRequestURI( parameter[ 1 ] )
-    if( err != nil  ) {
-      return "", errors.New( "invalid ohmage url" )
-    } else {
-      return parsed_url.String( ), nil
-    }
-  } else {
-    return "", errors.New( "url parameter not found" )
+func getPamUsername( pamh *C.pam_handle_t ) string {
+  _username := C.get_username( pamh )
+  if _username == nil {
+    return ""
   }
+  defer C.free( unsafe.Pointer( _username ) )
+  username := C.GoString(_username);
+  return username
 }
 
-func sliceFromArgv( argc C.int, argv **C.char ) [ ]string {
-  result := make( []string, 0, argc )
+func mapFromArgv( argc C.int, argv **C.char ) map[string]string {
+  parameters := make( []string, 0, argc )
   for i := 0; i < int( argc ); i++ {
     str := C.string_from_argv( C.int( i ), argv )
     defer C.free( unsafe.Pointer( str ) )
-    result = append( result, C.GoString( str ) )
+    parameters = append( parameters, C.GoString( str ) )
+  }
+  result := make( map[string]string )
+  if len( parameters ) > 0 {
+    for _ , _parameter := range parameters {
+      parameter := strings.Split( _parameter, "=" )
+      if len( parameter ) > 1 && parameter[ 0 ] != "" {
+        result[ parameter[ 0 ] ] = parameter[ 1 ]
+      }
+    }
   }
   return result
 }

@@ -2,7 +2,9 @@ package main
 
 /*
 #cgo LDFLAGS: -lpam -fPIC
-#include <security/pam_appl.h>
+#define PAM_SM_AUTH
+#define PAM_SM_SESSION
+#include <security/pam_modules.h>
 #include <stdlib.h>
 #include <string.h>
 char *string_from_argv(int i, char **argv) {
@@ -41,6 +43,22 @@ char *get_password( pam_handle_t *pamHandle ) {
   }
 
   return strdup( password );
+}
+
+PAM_EXTERN int pam_sm_authenticate(pam_handle_t* pamh, int flags, int argc, const char** argv) {
+  return pamAuthenticate(pamh, flags, argc, argv);
+}
+
+PAM_EXTERN int pam_sm_setcred(pam_handle_t* pamh, int flags, int argc, const char** argv) {
+  return PAM_IGNORE;
+}
+
+PAM_EXTERN int pam_sm_open_session(pam_handle_t* pamh, int flags, int argc, const char** argv) {
+  return pamOpenSession(pamh, flags, argc, argv);
+}
+
+PAM_EXTERN int pam_sm_close_session(pam_handle_t* pamh, int flags, int argc, const char** argv) {
+  return PAM_SUCCESS;
 }
 */
 import "C"
