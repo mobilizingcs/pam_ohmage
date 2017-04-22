@@ -1,0 +1,17 @@
+#
+# Sample pam configuration for RStudio PAM Sessions to be used with pam_ohmage
+#
+
+# This allows root to su without passwords (this is required)
+
+auth       sufficient pam_rootok.so
+session    required   pam_env.so readenv=1
+session    required   pam_env.so readenv=1 envfile=/etc/default/locale
+session    required   pam_limits.so
+
+# This allows local user account to be setup before a new session is started
+# Needed for load-balanced setup when the machine where the session is to be started
+# does not have the user account
+session   required pam_ohmage.so debug=true
+
+account   optional pam_permit.so

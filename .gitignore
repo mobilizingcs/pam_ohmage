@@ -1,2 +1,3 @@
-pam_ohmage.h
-pam_ohmage.so
+bin/pam_ohmage.h
+bin/pam_ohmage.so
+devsync.sh

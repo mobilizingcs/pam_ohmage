@@ -2,7 +2,7 @@ package main
 
 import (
   "github.com/pkg/errors"
-  "gohmage"
+  "github.com/mobilizingcs/gohmage"
 )
 
 func isUserAuthenticated( ohmage_url string, username string, password string ) ( bool, error ) {

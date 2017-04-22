@@ -1,0 +1,14 @@
+#
+# Sample pam configuration for RStudio PAM Auth to be used with pam_ohmage
+#
+
+# Auth module. url is ohmage server base URL with no trailing slash
+auth required pam_ohmage.so url=http://ohmage/ debug=true
+
+# We do not use pam_ohmage because of the way RStudio expects user accounts to be available locally
+# We can open_session from within the auth module
+session sufficient pam_permit.so
+
+# account & password module should always be permitted for RStudio
+account sufficient pam_permit.so
+password sufficient pam_deny.so
