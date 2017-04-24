@@ -5,6 +5,11 @@ rstudio() {
   /usr/lib/rstudio-server/bin/rserver --server-daemonize 0
 }
 
+syslog() {
+  echo "Starting syslog"
+  syslog-ng
+}
+
 addUser() {
   if [ -z "$1" ]
   then
@@ -33,6 +38,7 @@ addUserAndHomeDir() {
 }
 
 rstudio & rstudio_pid=${!}
+syslog
 
 echo "Setting up user accounts for the tests"
 # a: user account & home directory
@@ -80,7 +86,8 @@ addUserAndHomeDir uclaids-68912
 /usr/sbin/deluser uclaids-68912 > /test_entrypoint.log 2>&1
 
 echo "User account setup complete. Waiting for tests to start and finish."
+echo "Tailing syslog"
 while true
 do
-  tail -f /dev/null & wait ${!}
+  tail -f /var/log/syslog & wait ${!}
 done

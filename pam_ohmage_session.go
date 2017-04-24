@@ -112,9 +112,9 @@ func getUserHomeDirectoryOwner( username string ) ( int, bool, error ) {
   }
   directory_mode := directory_info.Sys( ).( *syscall.Stat_t )
   directory_owner := int( directory_mode.Uid )
-  if directory_owner == 0 {
-    log.Debug( "Home directory is owned by root. Some funny business is happening" )
-    return 0, false, errors.New( "Directory is owned by root. Cannot proceed" )
+  if directory_owner < 500 {
+    log.Debug( "Home directory is owned by uid < 500. Cannot proceed." )
+    return 0, false, errors.New( "Directory is owned by user uid < 500. Cannot proceed" )
   }
   return directory_owner, true, nil
 }

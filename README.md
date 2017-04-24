@@ -8,6 +8,9 @@ How to build:
     - Run the docker container to build pam_ohmage: `docker run -v $(pwd):/go/src/pam_ohmage mobilizingcs/pam_ohmage`
     - `pam_ohmage.so` should be available at `./bin/pam_ohmage.so`
 
+How to build for data container:
+  - Run : `docker-compose build pam_ohmage_build`
+
 How to do functional testing w/ RStudio:
 
   - Using Docker Compose
