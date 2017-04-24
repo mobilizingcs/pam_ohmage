@@ -1,13 +1,8 @@
 #!/bin/bash
 
-rstudio() {
+startRstudio() {
   echo "Starting rstudio server..."
-  /usr/lib/rstudio-server/bin/rserver --server-daemonize 0
-}
-
-syslog() {
-  echo "Starting syslog"
-  syslog-ng
+  /usr/lib/rstudio-server/bin/rserver --server-daemonize 1
 }
 
 addUser() {
@@ -36,9 +31,6 @@ addUserAndHomeDir() {
     -q --gecos "" \
     $1
 }
-
-rstudio & rstudio_pid=${!}
-syslog
 
 echo "Setting up user accounts for the tests"
 # a: user account & home directory
@@ -85,9 +77,4 @@ addUserAndHomeDir uclaids-68912
 # directory is owned by a user that once existed
 /usr/sbin/deluser uclaids-68912 > /test_entrypoint.log 2>&1
 
-echo "User account setup complete. Waiting for tests to start and finish."
-echo "Tailing syslog"
-while true
-do
-  tail -f /var/log/syslog & wait ${!}
-done
+echo "User account setup complete."

@@ -8,7 +8,7 @@ RUN set -x \
     && echo 'deb http://cran.rstudio.com/bin/linux/debian jessie-cran3/' >> /etc/apt/sources.list \
     && apt-key adv --keyserver keys.gnupg.net --recv-key 381BA480 \
     && apt-get update \
-    && apt-get install -y r-base gdebi libcurl4-openssl-dev libssl-dev locales syslog-ng
+    && apt-get install -y r-base gdebi libcurl4-openssl-dev libssl-dev locales rsyslog
 
 RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
     locale-gen en_US.UTF-8 && \
@@ -27,11 +27,13 @@ RUN echo "auth-pam-sessions-profile=rstudio-session" >> /etc/rstudio/rserver.con
 VOLUME /pam_ohmage/bin
 
 EXPOSE 8787
-COPY ./test/platforms/test_entrypoint.sh /test_entrypoint.sh
-RUN chmod +x /test_entrypoint.sh
+
+COPY ./test/platforms/debian/docker_entrypoint.sh /docker_entrypoint.sh
+COPY ./test/platforms/common.sh /common.sh
+RUN chmod +x /common.sh
+RUN chmod +x /docker_entrypoint.sh
 RUN ln -s /pam_ohmage/bin/pam_ohmage.so /lib/security/pam_ohmage.so
 
-RUN sed -i -E 's/^(\s*)system\(\);/\1unix-stream("\/dev\/log");/' /etc/syslog-ng/syslog-ng.conf
-RUN sed -i 's/^#\(SYSLOGNG_OPTS="--no-caps"\)/\1/g' /etc/default/syslog-ng
+RUN printf "if \$programname startswith 'pam_ohmage' then /var/log/pam_ohmage.log \nstop" >> /etc/rsyslog.d/pam_ohmage.conf
 
-ENTRYPOINT /test_entrypoint.sh
+ENTRYPOINT /docker_entrypoint.sh
