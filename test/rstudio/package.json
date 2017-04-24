@@ -1,0 +1,14 @@
+{
+  "name": "rstudio_tests",
+  "version": "1.0.0",
+  "description": "",
+  "main": "runner.js",
+  "dependencies": {
+    "chai": "^3.5.0",
+    "wdio-json-reporter": "^0.2.1",
+    "wdio-mocha-framework": "^0.5.10",
+    "webdriverio": "^4.7.1"
+  },
+  "author": "Kapeel Sable <kapeel@mobilizingcs.org>",
+  "license": "Apache 2.0"
+}

@@ -4,16 +4,17 @@ How to build:
     - `make`
   - If you are not a linux machine, you should use the Docker method
     - Make sure docker is available
-    - Run `docker run -v $(pwd):/go/src/pam_ohmage mobilizingcs/pam_ohmage`
+    - Build the docker image: `docker build . -t mobilizingcs/pam_ohmage`
+    - Run the docker container to build pam_ohmage: `docker run -v $(pwd):/go/src/pam_ohmage mobilizingcs/pam_ohmage`
     - `pam_ohmage.so` should be available at `./bin/pam_ohmage.so`
 
 How to do functional testing w/ RStudio:
-  - Using docker
-    - Make sure docker is available
-    - Build pam_ohmage.so: `docker run -v $(pwd):/go/src/pam_ohmage mobilizingcs/pam_ohmage`
-    - Test on debian
-      - Build the container: `docker build -f ./test/debian/Dockerfile -t pam_ohmage/debian .`
-      - Run the container: `docker run -v $(pwd)/bin:/pam_ohmage/bin -p 8787:8787 pam_ohmage/debian`
+
+  - Using Docker Compose
+    - Run: `docker-compose up -d`
+    - If there have been code changes, you should rebuild the pam_ohmage_build service with:
+        `docker-compose build pam_ohmage_build`
+    - And re-run all services with: `docker-compose up -d`
 
 Roadmap
   - Add multi-server uid sync support
@@ -22,4 +23,5 @@ Roadmap
 Warning
   - This module breaks RStudio Server Pro's user impersonation feature when the
 RStudio user account being impersonated does not already have a corresponding local
-linux account
+linux account. This could happen on ephemeral RStudio servers with NFS mounted /home
+directory.

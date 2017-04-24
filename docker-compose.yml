@@ -1,0 +1,72 @@
+version: "3"
+services:
+
+  test_debian:
+    build:
+      context: .
+      dockerfile: ./test/rstudio/Dockerfile
+    environment:
+      - RSTUDIO_SERVER=debian
+      - RSTUDIO_SERVER_PORT=8787
+      - OHMAGE_SERVER=ohmage
+      - OHMAGE_SERVER_PORT=8080
+      - SELENIUM_SERVER=selenium
+      - SELENIUM_SERVER_PORT=4444
+    depends_on:
+      - ohmage
+      - selenium
+      - debian
+
+  selenium:
+    image: selenium/standalone-chrome
+    ports:
+      - "4444:4444"
+
+  debian:
+    volumes:
+      - pam_ohmage_build:/pam_ohmage/bin
+    ports:
+      - "8787:8787"
+    build:
+      context: .
+      dockerfile: ./test/platforms/debian/Dockerfile
+    depends_on:
+      - ohmage
+
+  ohmage_test_setup:
+    build:
+      context: .
+      dockerfile: ./test/ohmage_test_setup/Dockerfile
+    depends_on:
+      - ohmage
+    environment:
+      - OHMAGE_SERVER=ohmage
+      - OHMAGE_SERVER_PORT=8080
+
+  pam_ohmage_build:
+    volumes:
+      - pam_ohmage_build:/pam_ohmage/bin
+    build:
+      context: .
+      dockerfile: ./Dockerfile_Build
+
+  ohmage:
+    image: ohmage/server
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - MYSQL_DATABASE=ohmage
+      - MYSQL_USER=ohmage
+      - MYSQL_PASSWORD=ohmage
+  db:
+    image: mysql:5.6
+    environment:
+      - MYSQL_ROOT_PASSWORD=setmebetter
+      - MYSQL_DATABASE=ohmage
+      - MYSQL_USER=ohmage
+      - MYSQL_PASSWORD=ohmage
+volumes:
+  pam_ohmage_build:

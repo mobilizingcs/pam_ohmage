@@ -1,0 +1,15 @@
+FROM golang:1.8
+LABEL maintainer "Kapeel Sable <kapeel.sable@gmail.com>"
+
+RUN echo 'deb http://ftp.de.debian.org/debian jessie main' >> /etc/apt/sources.list \
+    && apt-get update \
+    && apt-get install libpam0g-dev
+
+COPY . /go/src/pam_ohmage
+WORKDIR /go/src/pam_ohmage
+
+RUN go get -d -v
+RUN go build -buildmode=c-shared -o /go/src/app/bin/pam_ohmage.so
+
+VOLUME /pam_ohmage/bin
+ENTRYPOINT cp /go/src/app/bin/pam_ohmage.so /pam_ohmage/bin/pam_ohmage.so
