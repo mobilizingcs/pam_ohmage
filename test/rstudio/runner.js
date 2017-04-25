@@ -20,7 +20,7 @@ wdio.run().then( function( code ) {
   var json_report = require( './reports/' + json_report_file );
   var state = json_report.state;
   if( state.failed > 0 ) {
-    console.error( 'Some tests failed: ' + JSON.parse( JSON.stringify( state ) ) );
+    console.error( 'Some tests failed: ' + JSON.stringify( state ) );
   }
   process.exit( code );
 

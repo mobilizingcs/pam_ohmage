@@ -120,15 +120,10 @@ func getUserHomeDirectoryOwner( username string ) ( int, bool, error ) {
 }
 func createUserAccount( username string ) ( bool, error ) {
   log.Notice( "Creating user account" )
-  cmd := exec.Command(  "/usr/sbin/adduser",
+  cmd := exec.Command(  "/usr/sbin/useradd",
                         "--shell",
                         "/usr/sbin/nologin",
-                        "--disabled-password",
-                        "--disabled-login",
                         "--no-create-home",
-                        "-q",
-                        "--gecos",
-                        "\"\"",
                         username )
   _stdout_stderr, err := cmd.CombinedOutput( )
   if err != nil {

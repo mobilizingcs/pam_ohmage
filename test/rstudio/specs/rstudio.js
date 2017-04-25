@@ -22,7 +22,6 @@ function userSignedIn( username ) {
 }
 
 function signOut( ) {
-  browser.deleteCookie( );
   $( 'button[title="Sign out"]' ).click( );
   $( '#caption' ).waitForVisible( );
 }
@@ -30,6 +29,7 @@ function signOut( ) {
 describe( 'RStudio', function() {
 
   beforeEach( function( ) {
+    browser.reload( );
     browser.url( '/' );
     $( '#caption' ).waitForVisible( );
   } );
@@ -38,7 +38,8 @@ describe( 'RStudio', function() {
     it( 'user '
       + account.username + ' should'
       + (!account.canSignIn ? ' not ' : ' ')
-      + 'be able to sign in', function( ) {
+      + 'be able to sign in | '
+      + account.test, function( ) {
       signIn( account.username, account.username )
       var user_signed_in = userSignedIn( account.username );
       if( account.canSignIn && user_signed_in ) {
@@ -48,10 +49,6 @@ describe( 'RStudio', function() {
       } else {
         if( user_signed_in ) {
           signOut( );
-        } else {
-          // clear cookies just in case RStudio shows "Permission denied" page
-          // with no controls
-          browser.deleteCookie( );
         }
         throw new Error( "Sign-in test failed."
           + " Username: " + account.username

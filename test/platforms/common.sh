@@ -10,12 +10,9 @@ addUser() {
   then
     return 0
   fi
-  /usr/sbin/adduser \
+  /usr/sbin/useradd \
     --no-create-home \
     --shell /usr/sbin/nologin \
-    --disabled-password \
-    --disabled-login \
-    -q --gecos "" \
     $1
 }
 
@@ -24,11 +21,9 @@ addUserAndHomeDir() {
   then
     return 0
   fi
-  /usr/sbin/adduser \
+  /usr/sbin/useradd \
+    --create-home \
     --shell /usr/sbin/nologin \
-    --disabled-password \
-    --disabled-login \
-    -q --gecos "" \
     $1
 }
 
