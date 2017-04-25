@@ -1,6 +1,34 @@
 version: "3"
 services:
 
+  # test_centos:
+  #   build:
+  #     context: .
+  #     dockerfile: ./test/rstudio/Dockerfile
+  #   environment:
+  #     - RSTUDIO_SERVER=centos
+  #     - RSTUDIO_SERVER_PORT=8787
+  #     - OHMAGE_SERVER=ohmage
+  #     - OHMAGE_SERVER_PORT=8080
+  #     - SELENIUM_SERVER=selenium
+  #     - SELENIUM_SERVER_PORT=4444
+  #   depends_on:
+  #     - ohmage
+  #     - selenium
+  #     - centos
+
+  # centos:
+  #   volumes:
+  #     - pam_ohmage_build:/pam_ohmage/bin
+  #   ports:
+  #     - "8787:8787"
+  #   build:
+  #     context: .
+  #     dockerfile: ./test/platforms/centos/Dockerfile
+  #   depends_on:
+  #     - ohmage
+  #     - pam_ohmage_build
+
   test_debian:
     build:
       context: .
@@ -17,11 +45,6 @@ services:
       - selenium
       - debian
 
-  selenium:
-    image: selenium/standalone-chrome
-    ports:
-      - "4444:4444"
-
   debian:
     volumes:
       - pam_ohmage_build:/pam_ohmage/bin
@@ -33,6 +56,11 @@ services:
     depends_on:
       - ohmage
       - pam_ohmage_build
+
+  selenium:
+    image: selenium/standalone-chrome
+    ports:
+      - "4444:4444"
 
   ohmage_test_setup:
     build:
