@@ -22,6 +22,7 @@ function userSignedIn( username ) {
 }
 
 function signOut( ) {
+  browser.deleteCookie( );
   $( 'button[title="Sign out"]' ).click( );
   $( '#caption' ).waitForVisible( );
 }
@@ -47,6 +48,10 @@ describe( 'RStudio', function() {
       } else {
         if( user_signed_in ) {
           signOut( );
+        } else {
+          // clear cookies just in case RStudio shows "Permission denied" page
+          // with no controls
+          browser.deleteCookie( );
         }
         throw new Error( "Sign-in test failed."
           + " Username: " + account.username
