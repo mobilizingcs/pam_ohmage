@@ -13,13 +13,14 @@ pam_ohmage.so is a Linux Pluggable Authentication Module that authenticates agai
 ## Functional testing with RStudio & Ohmage:
 Testing the module requires a lot of different software components to play together (ohmage, mysql, rstudio, selenium, webdriverio). Docker Compose is used to orchestrate all these components together.
 
-### Debian
-1. Run: `docker-compose -f docker-compose.yml -f test/platforms/centos/docker-compose.yml up test_debian`
-2. Once complete, run: `docker-compose -f docker-compose.yml -f test/platforms/centos/docker-compose.yml up test_debian`
+##### Install gulp:
+`npm -g install gulp-cli@1.3.0`
+`npm install gulp@3.9.1`
 
-### CentOS
-1. Run: `docker-compose -f docker-compose.yml -f test/platforms/centos/docker-compose.yml up test_centos`
-2. Once complete, run: `docker-compose -f docker-compose.yml -f test/platforms/centos/docker-compose.yml down`
+##### Run docker-compose via gulp
+`gulp test_[PLATFORM]`
+Example: `gulp test_debian`
+Available platforms: `debian, centos`
 
 Note: If there have been code changes, you should rebuild the pam_ohmage_build service with:  `docker-compose build pam_ohmage_build` before running `docker-compose up` again.
 

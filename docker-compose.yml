@@ -10,6 +10,7 @@ services:
     build:
       context: .
       dockerfile: ./test/ohmage_test_setup/Dockerfile
+    image: mobilizingcs/pam_ohmage_ohmage_test_setup
     depends_on:
       - ohmage
     environment:
@@ -22,6 +23,7 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile_Build
+    image: mobilizingcs/pam_ohmage_build
 
   ohmage:
     image: ohmage/server

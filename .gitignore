@@ -1,5 +1,3 @@
-bin/pam_ohmage.h
-bin/pam_ohmage.so
-test/ohmage_test_setup/node_modules
 devsync.sh
+node_modules
 **/.DS_Store
