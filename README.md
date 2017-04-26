@@ -13,9 +13,13 @@ pam_ohmage.so is a Linux Pluggable Authentication Module that authenticates agai
 ## Functional testing with RStudio & Ohmage:
 Testing the module requires a lot of different software components to play together (ohmage, mysql, rstudio, selenium, webdriverio). Docker Compose is used to orchestrate all these components together.
 
-1. Run: `docker-compose up -d`
-2. Tail logs from the test-runner: `docker-compose logs -f test_debian`
-3. Once complete, run `docker-compose down -v`
+### Debian
+1. Run: `docker-compose -f docker-compose.yml -f test/platforms/centos/docker-compose.yml up test_debian`
+2. Once complete, run: `docker-compose -f docker-compose.yml -f test/platforms/centos/docker-compose.yml up test_debian`
+
+### CentOS
+1. Run: `docker-compose -f docker-compose.yml -f test/platforms/centos/docker-compose.yml up test_centos`
+2. Once complete, run: `docker-compose -f docker-compose.yml -f test/platforms/centos/docker-compose.yml down`
 
 Note: If there have been code changes, you should rebuild the pam_ohmage_build service with:  `docker-compose build pam_ohmage_build` before running `docker-compose up` again.
 
