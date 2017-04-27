@@ -6,5 +6,6 @@
   { "username": "uclaids-68912", "canSignIn": true, "test": "user account does not exist, home directory exists" },
   { "username": "uclaids-32478", "canSignIn": true, "test": "user account does not exist, home directory is owned by uid > 500" },
   { "username": "uclaids-25987", "canSignIn": true, "test": "user account exists, home directory is owned by uid > 500" },
-  { "username": "uclaids-78945", "canSignIn": false, "test": "user account does not exist, home directory is owned by root / uid < 500" }
+  { "username": "uclaids-78945", "canSignIn": false, "test": "user account does not exist, home directory is owned by root / uid < 500" },
+  { "username": "uclaids-34912", "canSignIn": true, "test": "user account exists, home directory and files in it are owned by uid > 500" }
 ]

@@ -4,8 +4,8 @@ RUN apt-get update \
     && apt-get -y install netcat python g++ build-essential
 
 # Context must be [PROJECT ROOT]
-ADD ./test/rstudio /tests
-ADD ./test/accounts.json /tests/accounts.json
+COPY ./test/rstudio /tests
+COPY ./test/accounts.json /tests/accounts.json
 
 RUN chmod +x /tests/docker_entrypoint.sh
 WORKDIR /tests

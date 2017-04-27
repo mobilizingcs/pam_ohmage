@@ -14,6 +14,13 @@ gulp.task( 'ohmage_test_setup', function( cb ) {
 
 platforms.forEach( function( platform ) {
 
+  gulp.task( 'build_' + platform, function( cb ) {
+    spawnDockerCompose( [ '-f', './docker-compose.yml',
+      '-f', './test/platforms/' + platform +'/docker-compose.yml',
+      'build', '--no-cache', 'test_' + platform
+    ], cb );
+  } )
+
   // This is a good way to enforce the order in which the services are created.
   // ohmage_test_setup must be finished before starting webdriverio tests
 

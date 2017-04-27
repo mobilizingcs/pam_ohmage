@@ -2,6 +2,7 @@ package main
 
 import (
   "github.com/pkg/errors"
+  "path/filepath"
   "os"
   "os/exec"
   "os/user"
@@ -163,9 +164,18 @@ func createUserHomeDirectory( username string, uid int, gid int ) ( bool, error 
   return false, nil
 }
 
+func ChownR(path string, uid int, gid int) error {
+  return filepath.Walk(path, func(name string, info os.FileInfo, err error) error {
+    if err == nil {
+      err = os.Chown(name, uid, gid)
+    }
+    return err
+  })
+}
+
 func setUserHomeDirectoryPermissions( username string, uid int, gid int ) ( bool, error ) {
   log.Notice( "Setting user home directory ownership" )
-  if err := os.Chown( "/home/" + username, uid, gid ); err != nil {
+  if err := ChownR( "/home/" + username, uid, gid ); err != nil {
     log.Debug( "Failed to set home directory ownership" )
     return false, err
   } else {

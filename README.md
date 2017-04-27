@@ -15,14 +15,20 @@ Testing the module requires a lot of different software components to play toget
 
 ##### Install gulp:
 `npm -g install gulp-cli@1.3.0`
+
 `npm install gulp@3.9.1`
 
 ##### Run docker-compose via gulp
 `gulp test_[PLATFORM]`
+
 Example: `gulp test_debian`
+
 Available platforms: `debian, centos`
 
-Note: If there have been code changes, you should rebuild the pam_ohmage_build service with:  `docker-compose build pam_ohmage_build` before running `docker-compose up` again.
+Note:
+- If there have been code changes to pam_ohmage, you should rebuild the pam_ohmage_build service with:  `docker-compose build pam_ohmage_build` before running `gulp test_[PLATFORM]` again.
+- If there have been changes to the webdriverio test suite, you should rebuild `test_[PLATFORM]` service.
+- If there have been changes to the test platform image, you should rebuild the `[PLATFORM]` service.
 
 ### Roadmap
   - Add multi-server linux user uid sync support

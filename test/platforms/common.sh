@@ -67,6 +67,15 @@ chown 300:300 /home/uclaids-67154
 addUserAndHomeDir uclaids-25987
 chown 4525:4525 /home/uclaids-25987
 
+# scenario b5: user account exists, home directory and files in it are owned by uid > 500
+addUserAndHomeDir uclaids-34912
+chown 4111:4111 /home/uclaids-34912
+mkdir -p /home/uclaids-34912/sub/directory/fortest/
+echo "shouldbegarbledtext" > /home/uclaids-34912/sub/testtxt
+echo "shouldbemoregarbledtext" > /home/uclaids-34912/sub/directory/testtxt
+chown 4556:4556 -R /home/uclaids-34912/sub
+chown 4555:4555 -R /home/uclaids-34912/sub/directory
+
 #deferredScenarioA4
 addUserAndHomeDir uclaids-68912
 # directory is owned by a user that once existed
