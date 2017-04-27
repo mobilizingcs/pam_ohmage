@@ -1,4 +1,7 @@
-var accounts = require( '../accounts.json' );
+var setup_config = require( '../setup_config.json' );
+var accounts = [ ].concat(  setup_config.login,
+                            setup_config.directory_ownership,
+                            setup_config.test_class_participation );
 
 function signIn( username, password ) {
   $( '#username' ).setValue( username );

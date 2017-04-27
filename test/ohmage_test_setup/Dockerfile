@@ -5,7 +5,7 @@ RUN apt-get update \
 
 # Context must be [PROJECT ROOT]
 ADD ./test/ohmage_test_setup /test_setup
-ADD ./test/accounts.json /test_setup/accounts.json
+ADD ./test/setup_config.json /test_setup/setup_config.json
 
 RUN chmod +x /test_setup/docker_entrypoint.sh
 WORKDIR /test_setup

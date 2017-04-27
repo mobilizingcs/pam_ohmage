@@ -174,6 +174,7 @@ func ChownR(path string, uid int, gid int) error {
 }
 
 func setUserHomeDirectoryPermissions( username string, uid int, gid int ) ( bool, error ) {
+  // todo: write webdriverio test to check accessibility from RStudio terminal
   log.Notice( "Setting user home directory ownership" )
   if err := ChownR( "/home/" + username, uid, gid ); err != nil {
     log.Debug( "Failed to set home directory ownership" )

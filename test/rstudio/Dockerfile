@@ -5,7 +5,7 @@ RUN apt-get update \
 
 # Context must be [PROJECT ROOT]
 COPY ./test/rstudio /tests
-COPY ./test/accounts.json /tests/accounts.json
+COPY ./test/setup_config.json /tests/setup_config.json
 
 RUN chmod +x /tests/docker_entrypoint.sh
 WORKDIR /tests

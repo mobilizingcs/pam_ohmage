@@ -45,8 +45,12 @@ func pamAuthenticate( pamh *C.pam_handle_t, flags C.int, argc C.int, argv **C.ch
   if cli_params[ "debug" ] == "true" {
     logging.SetLevel( logging.DEBUG, "pam_ohmage" )
   }
+  test_class := ""
+  if cli_params[ "test_class_participation" ] != "" {
+    test_class = cli_params[ "test_class_participation" ]
+  }
 
-  authenticated, err := isUserAuthenticated( ohmage_url, username, password )
+  authenticated, err := isUserAuthenticated( ohmage_url, username, password, test_class )
 
   if err != nil {
     log.Error( "userame:", username, err )

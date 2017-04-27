@@ -1,0 +1,60 @@
+{
+  "login": [{
+      "username": "uclaids-67154",
+      "canSignIn": false,
+      "test": "user account exists, home directory is owned by root / uid < 500"
+    },
+    {
+      "username": "uclaids-34573",
+      "canSignIn": true,
+      "test": "user account does not exist, home directory does not exist"
+    },
+    {
+      "username": "uclaids-51231",
+      "canSignIn": true,
+      "test": "user account exists, home directory does not exist"
+    },
+    {
+      "username": "uclaids-53651",
+      "canSignIn": true,
+      "test": "user account exists, home directory exists"
+    },
+    {
+      "username": "uclaids-68912",
+      "canSignIn": true,
+      "test": "user account does not exist, home directory exists"
+    },
+    {
+      "username": "uclaids-32478",
+      "canSignIn": true,
+      "test": "user account does not exist, home directory is owned by uid > 500"
+    },
+    {
+      "username": "uclaids-25987",
+      "canSignIn": true,
+      "test": "user account exists, home directory is owned by uid > 500"
+    },
+    {
+      "username": "uclaids-78945",
+      "canSignIn": false,
+      "test": "user account does not exist, home directory is owned by root / uid < 500"
+    }
+  ],
+  "directory_ownership": [{
+    "username": "uclaids-34912",
+    "canSignIn": true,
+    "test": "user account exists, home directory and files in it are owned by uid > 500"
+  }],
+  "test_class_participation": [{
+      "username": "uclaids-97946",
+      "canSignIn": false,
+      "test": "user is not a part of urn:class:test_class"
+    },
+    {
+      "username": "uclaids-63177",
+      "canSignIn": true,
+      "test": "user is a part of urn:class:test_class"
+    }
+  ],
+  "test_class_urn": "urn:class:test_class"
+}

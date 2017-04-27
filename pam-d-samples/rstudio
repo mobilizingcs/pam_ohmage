@@ -3,7 +3,7 @@
 #
 
 # Auth module. url is ohmage server base URL with no trailing slash
-auth required pam_ohmage.so url=http://ohmage:8080/app debug=true
+auth required pam_ohmage.so url=http://ohmage:8080/app debug=true test_class_participation=urn:class:test_class
 
 # We do not use pam_ohmage because of the way RStudio expects user accounts to be available locally
 # We can open_session from within the auth module
